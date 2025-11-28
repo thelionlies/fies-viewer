@@ -1,28 +1,26 @@
 from django.db import models
 
-# Create your models here.
-class Household(models.Model):
-    # Identification
-    W_PROV = models.IntegerField()
-    SEQ_NO = models.IntegerField(unique=True)
+class Province(models.Model):
+    code = models.IntegerField(unique=True)
+    name = models.CharField(max_length=50)
 
-    # Household Characteristics
+    def __str__(self):
+        return self.name
+
+
+class Household(models.Model):
+    province = models.ForeignKey(Province, on_delete=models.CASCADE)
+    SEQ_NO = models.IntegerField(unique=True)
     FSIZE = models.FloatField()
     URB = models.IntegerField()
     RFACT = models.FloatField(null=True, blank=True)
-
-    # Income
     TOINC = models.FloatField()
     WAGES = models.IntegerField()
     RPCINC = models.IntegerField()
     CASH_ABROAD = models.IntegerField(null=True, blank=True)
     CASH_DOMESTIC = models.IntegerField(null=True, blank=True)
-
-    # Expenditure
     TOTEX = models.FloatField()
     PERCAPITA = models.FloatField(null=True, blank=True)
-
-    # Specific expenditures
     FOOD = models.FloatField()
     CLOTH = models.IntegerField()
     HEALTH = models.IntegerField()
@@ -32,4 +30,4 @@ class Household(models.Model):
     EDUCATION = models.IntegerField()
 
     def __str__(self):
-        return f"Household {self.SEQ_NO} in Province {self.W_PROV}"
+        return f"Household {self.SEQ_NO} in {self.province}"
