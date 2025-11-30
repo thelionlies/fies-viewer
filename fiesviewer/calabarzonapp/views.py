@@ -1,7 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Max
+from django.contrib import messages
 from .models import Household, Province
-from .forms import HouseholdFilterForm
+from .forms import HouseholdFilterForm, HouseholdAddForm
 
 def index(request):
     return render(request, 'calabarzonapp/base_template.html')
@@ -14,20 +15,69 @@ def listhouseholds(request):
     return render(request, 'calabarzonapp/household_list.html', context)
 
 def household_detail(request, pk):
-    household = Household.objects.get(pk=pk)
+    household = get_object_or_404(Household, pk=pk)
     context = {
         'household': household
     }
     return render(request, 'calabarzonapp/household_detail.html', context)
 
+# This is for adding entries
 def household_form(request):
-    return render(request, 'calabarzonapp/household_form.html')
+    if request.method == 'POST':
+        form = HouseholdAddForm(request.POST)
+        
+        if form.is_valid():
+            household = form.save(commit=False)
+            
+            # This block is para makakuha ug next SEQ_NO according to max existing SEQ_NO
+            max_seq = Household.objects.aggregate(Max('SEQ_NO'))['SEQ_NO__max'] or 0
+            next_seq = max_seq + 1
 
-def household_edit(request):
-    return render(request, 'calabarzonapp/household_form.html')
+            while Household.objects.filter(SEQ_NO=next_seq).exists():
+                next_seq += 1
+                
+            household.SEQ_NO = next_seq # cant figure out how to auto increment
+            household.save()
+            
+            return redirect('household-list')
+    else:
+        form = HouseholdAddForm()
 
-def household_delete(request):
-    return render(request, 'calabarzonapp/household_delete.html')
+    return render(request, 'calabarzonapp/household_form.html', {'form': form})
+
+# For editing existing entries
+def household_edit(request, pk):
+    household = get_object_or_404(Household, pk=pk)
+    
+    if request.method == "GET":
+        form = HouseholdAddForm(instance=household)
+        context = {"form": form, "household": household}
+        return render(request, "calabarzonapp/household_form.html", context)
+    
+    elif request.method == "POST":
+        form = HouseholdAddForm(request.POST, instance=household)
+        
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Household #{household.SEQ_NO} has been updated successfully!")
+            return redirect('household-detail', pk=household.pk)
+
+        else:
+            context = {"form": form, "household": household}
+            return render(request, "calabarzonapp/household_form.html", context)
+
+# This is for deleting
+def household_delete(request, pk):
+    household = get_object_or_404(Household, pk=pk)
+
+    if request.method == "GET":
+        context = {"household": household}
+        return render(request, "calabarzonapp/household_delete.html", context)
+    
+    elif request.method == "POST":
+        household.delete()
+        return redirect("household-list")
+
 
 def household_search(request):
     form = HouseholdFilterForm()
