@@ -14,11 +14,11 @@ urlpatterns = [
     # localhost:8000/fiesviewer/households/form
     path('households/form/', views.household_form, name='household-form'),
 
-    # localhost:8000/fiesviewer/households/edit # Add pk for the OIC
-    path('households/edit/', views.household_edit, name='household-edit'),
+    # localhost:8000/fiesviewer/households/1/edit
+    path('households/<int:pk>/edit/', views.household_edit, name='household-edit'),
 
-    # localhost:8000/fiesviewer/households/delete # Add pk for the OIC
-    path('households/delete/', views.household_delete, name='household-delete'),
+    # localhost:8000/fiesviewer/households/1/delete
+    path('households/<int:pk>/delete/', views.household_delete, name='household-delete'),
 
     #localhost:8000/fiesviewer/households/search
     path('households/search/', views.household_search, name='household-search'),
