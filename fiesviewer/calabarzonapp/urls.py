@@ -23,8 +23,8 @@ urlpatterns = [
     #localhost:8000/fiesviewer/households/search
     path('households/search/', views.household_search, name='household-search'),
 
-    #localhost:8000/fiesviewer/households/filter
-    path('households/filter/', views.household_filter, name='household-filter'),
+    #localhost:8000/fiesviewer/households/filtered
+    path('households/filtered/', views.household_filtered, name='household-filtered'),
 
     # localhost:8000/fiesviewer/province-level
     path('province-level/', views.province_level, name='province-level'),

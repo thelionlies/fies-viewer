@@ -1,7 +1,36 @@
 {% extends "calabarzonapp/base_template.html" %}
 {% block maincontent %}
 
-    <h2>Household Search</h2>
+<h1>Search Households</h1>
 
+<form method="get" action="{% url 'household-filtered' %}">
+    <!-- Provinces (checklist) -->
+    <p>{{ form.provinces.label_tag }}<br>{{ form.provinces }}</p>
+
+    <!-- Area type -->
+    <p>{{ form.area_type.label_tag }}<br>{{ form.area_type }}</p>
+
+    <!-- Income -->
+    <p>{{ form.income_min.label_tag }}<br>
+       <input type="number" name="income_min"
+              value="{{ form.income_min.value|default:0 }}"
+              min="0" step="any"></p>
+    <p>{{ form.income_max.label_tag }}<br>
+       <input type="number" name="income_max"
+              value="{{ form.income_max.value|default:'' }}"
+              min="0" step="any"></p>
+
+    <!-- Total Expenditure -->
+    <p>{{ form.exp_min.label_tag }}<br>
+       <input type="number" name="exp_min"
+              value="{{ form.exp_min.value|default:0 }}"
+              min="0" step="any"></p>
+    <p>{{ form.exp_max.label_tag }}<br>
+       <input type="number" name="exp_max"
+              value="{{ form.exp_max.value|default:'' }}"
+              min="0" step="any"></p>
+
+    <button type="submit">Filter</button>
+</form>
 
 {% endblock %}

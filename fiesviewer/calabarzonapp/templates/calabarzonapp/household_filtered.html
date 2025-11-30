@@ -1,0 +1,21 @@
+{% extends "calabarzonapp/base_template.html" %}
+
+{% block maincontent %}
+
+    <h2>Household List (Filtered)</h2>
+
+    <ul>
+        {% for household in households %}
+            <li>
+                {{ household.province.name }} - {{ household.SEQ_NO }} | 
+                <a href="{% url 'household-detail' household.pk %}">More Info</a>
+            </li>
+        {% empty %}
+            <li>No households match your filters.</li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}
+
+
+
