@@ -1,0 +1,38 @@
+<!doctype html>
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>FIESVIEWER - Calabarzon</title>
+    </head>
+
+    <body>
+        <header>
+            <h1>FIESVIEWER - Calabarzon</h1>
+            <p></p>
+        </header>
+             <ul>
+                    <li><a href="{% url 'index' %}">Home</a></li>
+                    <li><a href="{% url 'province-level' %}">Province Dashboard</a></li>
+                    <li><a href="{% url 'household-list' %}">Household List</a></li>
+                    <li><a href="{% url 'household-form' %}">Add New Household</a></li>
+                    <li><a href="{% url 'household-edit' %}">Edit Existing Household</a></li>
+                    <li><a href="{% url 'household-delete' %}">Delete Existing Household</a></li>
+                    <li><a href="{% url 'household-search' %}">Search Households</a></li>
+                    <li><a href="{% url 'household-filter' %}">Filter Households</a></li>
+                </ul>
+        
+
+        <main>
+            
+            {% block maincontent %} {% endblock %}
+            
+           
+    
+        </main>
+
+    </body>
+
+  
+
+</html>

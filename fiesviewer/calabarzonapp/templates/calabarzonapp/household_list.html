@@ -1,0 +1,14 @@
+{% extends "calabarzonapp/base_template.html" %}
+
+{% block maincontent %}
+
+    <h2>Household List</h2>
+
+
+    <ul>
+        {% for household in householdlist %}
+            <li>{{ household.province }} - {{ household.SEQ_NO }} | <a href="{% url 'household-detail' household.pk %}">More Info</a></li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}

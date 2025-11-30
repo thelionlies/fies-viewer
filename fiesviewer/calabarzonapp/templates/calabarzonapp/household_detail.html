@@ -1,0 +1,99 @@
+{% extends "calabarzonapp/base_template.html" %}
+
+{% block maincontent %}
+
+<h2>Household Detail</h2>
+
+<h3>Basic Information</h3>
+<table border="1">
+    <tr>
+        <th>Sequence Number</th>
+        <td>{{ household.SEQ_NO }}</td>
+    </tr>
+    <tr>
+        <th>Province</th>
+        <td>{{ household.province }}</td>
+    </tr>
+    <tr>
+        <th>Family Size</th>
+        <td>{{ household.FSIZE }}</td>
+    </tr>
+    <tr>
+        <th>Urban/Rural</th>
+        <td>{{ household.URB }}</td>
+    </tr>
+    <tr>
+        <th>Raising Factor</th>
+        <td>{{ household.RFACT|default:"N/A" }}</td>
+    </tr>
+</table>
+
+<h3>Income</h3>
+<table border="1">
+    <tr>
+        <th>Total Income</th>
+        <td>₱{{ household.TOINC }}</td>
+    </tr>
+    <tr>
+        <th>Wages</th>
+        <td>₱{{ household.WAGES }}</td>
+    </tr>
+    <tr>
+        <th>Per Capita Income</th>
+        <td>₱{{ household.RPCINC }}</td>
+    </tr>
+    <tr>
+        <th>Cash from Abroad</th>
+        <td>₱{{ household.CASH_ABROAD|default:"N/A" }}</td>
+    </tr>
+    <tr>
+        <th>Cash Domestic</th>
+        <td>₱{{ household.CASH_DOMESTIC|default:"N/A" }}</td>
+    </tr>
+</table>
+
+<h3>Expenditure</h3>
+<table border="1">
+    <tr>
+        <th>Total Expenditure</th>
+        <td>₱{{ household.TOTEX }}</td>
+    </tr>
+    <tr>
+        <th>Per Capita Expenditure</th>
+        <td>₱{{ household.PERCAPITA|default:"N/A" }}</td>
+    </tr>
+    <tr>
+        <th>Food</th>
+        <td>₱{{ household.FOOD }}</td>
+    </tr>
+    <tr>
+        <th>Clothing</th>
+        <td>₱{{ household.CLOTH }}</td>
+    </tr>
+    <tr>
+        <th>Health</th>
+        <td>₱{{ household.HEALTH }}</td>
+    </tr>
+    <tr>
+        <th>Transport</th>
+        <td>₱{{ household.TRANSPORT }}</td>
+    </tr>
+    <tr>
+        <th>Communication</th>
+        <td>₱{{ household.COMMUNICATION }}</td>
+    </tr>
+    <tr>
+        <th>Recreation</th>
+        <td>₱{{ household.RECREATION }}</td>
+    </tr>
+    <tr>
+        <th>Education</th>
+        <td>₱{{ household.EDUCATION }}</td>
+    </tr>
+</table>
+
+<p>
+    <a href="{% url 'household-list' %}">Back to List</a>
+</p>
+
+{% endblock %}
