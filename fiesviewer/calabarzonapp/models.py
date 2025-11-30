@@ -9,10 +9,16 @@ class Province(models.Model):
 
 
 class Household(models.Model):
+
+    URB_CHOICES = [
+        (1, "Urban"),
+        (2, "Rural"),
+    ]
+
     province = models.ForeignKey(Province, on_delete=models.CASCADE)
     SEQ_NO = models.IntegerField(unique=True)
     FSIZE = models.FloatField()
-    URB = models.IntegerField()
+    URB = models.IntegerField(choices=URB_CHOICES)
     RFACT = models.FloatField(null=True, blank=True)
     TOINC = models.FloatField()
     WAGES = models.IntegerField()
