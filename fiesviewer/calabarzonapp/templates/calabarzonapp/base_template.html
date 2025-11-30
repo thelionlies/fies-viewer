@@ -16,8 +16,7 @@
                     <li><a href="{% url 'province-level' %}">Province Dashboard</a></li>
                     <li><a href="{% url 'household-list' %}">Household List</a></li>
                     <li><a href="{% url 'household-form' %}">Add New Household</a></li>
-                    <li><a href="{% url 'household-edit' %}">Edit Existing Household</a></li>
-                    <li><a href="{% url 'household-delete' %}">Delete Existing Household</a></li>
+                    <!-- Removed links for edit and delete -->
                     <li><a href="{% url 'household-search' %}">Search Households</a></li>
                     <li><a href="{% url 'household-filtered' %}">Filter Households</a></li>
                 </ul>
@@ -27,8 +26,6 @@
             
             {% block maincontent %} {% endblock %}
             
-           
-    
         </main>
 
     </body>

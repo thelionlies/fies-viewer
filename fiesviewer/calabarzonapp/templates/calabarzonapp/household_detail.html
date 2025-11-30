@@ -4,6 +4,12 @@
 
 <h2>Household Detail</h2>
 
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
 <h3>Basic Information</h3>
 <table border="1">
     <tr>
@@ -92,8 +98,12 @@
     </tr>
 </table>
 
-<p>
-    <a href="{% url 'household-list' %}">Back to List</a>
-</p>
+<h3> Options </h3>
+<ul>
+    <li><a href="{% url 'household-delete' pk=household.pk %}">Delete Household</a></li>
+    <li><a href="{% url 'household-edit' pk=household.pk %}">Edit Household</a></li>
+    <li><a href="{% url 'household-list' %}">Back to List</a></li>
+</ul>
+
 
 {% endblock %}

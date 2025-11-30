@@ -1,7 +1,14 @@
 {% extends "calabarzonapp/base_template.html" %}
 {% block maincontent %}
 
-    <h2>Household Delete</h2>
+<h2>Delete Household</h2>
 
+<form method="post">
+    {% csrf_token %}
+    <p>Are you sure you want to delete household <b>#{{ household.SEQ_NO }} - {{ household.province }}</b>?</p>
+    <a href="{% url 'household-list' %}">Cancel</a>
+    <input type="submit" value="Yes">
+</form>
 
 {% endblock %}
+
