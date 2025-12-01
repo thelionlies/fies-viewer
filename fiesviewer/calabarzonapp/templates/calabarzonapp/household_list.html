@@ -1,14 +1,86 @@
 {% extends "calabarzonapp/base_template.html" %}
+{% load humanize %}
 
 {% block maincontent %}
 
-    <h2>Household List</h2>
+<style>
+    table.custom-table {
+        margin-left: 40px;
+        border-collapse: collapse;
+        width: 70%;
+    }
+    table.custom-table th, table.custom-table td {
+        border: 1px solid #ddd;
+        padding: 5px;
+        text-align: center;
+    }
+    table.custom-table th {
+        background: #f7f7f7;
+    }
+</style>
 
-
-    <ul>
-        {% for household in householdlist %}
-            <li>{{ household.province }} - {{ household.SEQ_NO }} | <a href="{% url 'household-detail' household.pk %}">More Info</a></li>
+<table class="custom-table">
+    <thead>
+        <tr>
+            <th>Sequence Number</th>
+            <th>Province</th>
+            <th>Area Type</th>
+            <th>Family Size</th>
+            <th>Total Income</th>
+            <th>Total Expenditure</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for household in page_obj %}
+        <tr>
+            <td>{{ household.SEQ_NO }}</td>
+            <td>{{ household.province }}</td>
+            <td>
+                {% if household.URB == 1 %}Urban
+                {% elif household.URB == 2 %}Rural
+                {% else %}N/A{% endif %}
+            </td>
+            <td>{{ household.FSIZE }}</td>
+            <td>₱{{ household.TOINC|floatformat:2|intcomma }}</td>
+            <td>₱{{ household.TOTEX|floatformat:2|intcomma }}</td>
+            <td>
+                <a href="{% url 'household-detail' household.pk %}" class="btn btn-info">View</a>
+                <a href="{% url 'household-edit' household.pk %}" class="btn btn-primary">Edit</a>
+                <a href="{% url 'household-delete' household.pk %}" class="btn btn-danger">Delete</a>
+            </td>
+        </tr>
         {% endfor %}
-    </ul>
+    </tbody>
+</table>
+
+<!-- Page number and navigation -->
+<div style="width:70%; margin-left:40px; margin-top:10px; display:flex; justify-content:space-between; align-items:center; gap:10px;">
+
+    <!-- Page info and navigation buttons on the left -->
+    <div style="display:flex; align-items:center; gap:5px;">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-secondary">Previous</a>
+        {% endif %}
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-secondary">Next</a>
+        {% endif %}
+
+        <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    </div>
+
+    <!-- Page jump form on the right -->
+    <div>
+        <form method="get" style="display:inline-flex; align-items:center; gap:5px;">
+            <label for="page_input">Go to page:</label>
+            <input type="number" id="page_input" name="page" min="1" max="{{ page_obj.paginator.num_pages }}" style="width:60px;" required>
+            <button type="submit" class="btn btn-secondary">Go</button>
+        </form>
+    </div>
+
+</div>
+
+
 
 {% endblock %}

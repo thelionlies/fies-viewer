@@ -3,16 +3,20 @@ from django.db.models import Max
 from django.contrib import messages
 from .models import Household, Province
 from .forms import HouseholdFilterForm, HouseholdAddForm
+from django.core.paginator import Paginator
 
 def index(request):
     return render(request, 'calabarzonapp/base_template.html')
 
 def listhouseholds(request):
-    householdlist = Household.objects.all()
-    context = {
-        'householdlist': householdlist
-    }
-    return render(request, 'calabarzonapp/household_list.html', context)
+    all_households = Household.objects.all().order_by('SEQ_NO')
+    paginator = Paginator(all_households, 20)  # 20 households per page
+
+    page_number = request.GET.get('page')  # Get ?page=1, ?page=2, etc.
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'calabarzonapp/household_list.html', {'page_obj': page_obj})
+
 
 def household_detail(request, pk):
     household = get_object_or_404(Household, pk=pk)

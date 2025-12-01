@@ -1,109 +1,122 @@
 {% extends "calabarzonapp/base_template.html" %}
+{% load humanize %}
 
 {% block maincontent %}
 
-<h2>Household Detail</h2>
+<style>
+    table { width: 30%; border-collapse: collapse; }
+    th, td { padding: 5px; border: 1px solid #ddd; }
+    th { background: #f7f7f7; text-align: center; }
+    .text-right { text-align: right; }
+    .text-center { text-align: center; }
+    .peso { float: left; }
+    .section { margin-bottom: 40px; }
+    .section table { margin-left: 40px;}
+    .separator { border-top: 2px solid #ccc; margin: 10px 0; }
+</style>
 
-{% if messages %}
-    {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-    {% endfor %}
-{% endif %}
+<!-- Header & Buttons -->
+<div style="display:flex; flex-direction:column;">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h1>Household Sequence Number: {{ household.SEQ_NO }}</h1>
+        <div>
+            <a href="{% url 'household-edit' pk=household.pk %}" class="btn btn-primary">Edit</a>
+            <a href="{% url 'household-delete' pk=household.pk %}" class="btn btn-danger">Delete</a>
+        </div>
+    </div>
 
+    <p style="font-size: 16px; color: #555; margin-top: 1px; margin-left: 40px;">
+       Note that each FIES record represents one sampled household but corresponds to multiple households in the population, as indicated by the raising factor. Some factors, such as family size, may appear fractional because they are derived from averaged values across survey visits.
+    </p>
+</div>
+
+
+<!-- BASIC INFO -->
+<div class="section">
 <h3>Basic Information</h3>
-<table border="1">
-    <tr>
-        <th>Sequence Number</th>
-        <td>{{ household.SEQ_NO }}</td>
-    </tr>
-    <tr>
-        <th>Province</th>
-        <td>{{ household.province }}</td>
-    </tr>
-    <tr>
-        <th>Family Size</th>
-        <td>{{ household.FSIZE }}</td>
-    </tr>
-    <tr>
-        <th>Urban/Rural</th>
-        <td>{{ household.URB }}</td>
-    </tr>
-    <tr>
-        <th>Raising Factor</th>
-        <td>{{ household.RFACT|default:"N/A" }}</td>
-    </tr>
-</table>
+<table>
+    <tr><th>Province</th>
+        <td class="text-center">{{ household.province }}</td></tr>
 
+    <tr><th>Area Type</th>
+        <td class="text-center">
+            {% if household.URB == 1 %}Urban
+            {% elif household.URB == 2 %}Rural
+            {% else %}N/A{% endif %}
+        </td></tr>
+
+    <tr><th>Family Size</th>
+        <td class="text-center">{{ household.FSIZE }}</td> </tr>
+
+    <tr><th>Raising Factor</th>
+        <td class="text-center">
+            {% if household.RFACT %}
+                {{ household.RFACT|floatformat:1 }}
+            {% else %}1.0{% endif %}
+        </td></tr>
+</table>
+</div>
+
+<div class="separator"></div>
+
+<!-- INCOME -->
+<div class="section">
 <h3>Income</h3>
-<table border="1">
-    <tr>
-        <th>Total Income</th>
-        <td>₱{{ household.TOINC }}</td>
-    </tr>
-    <tr>
-        <th>Wages</th>
-        <td>₱{{ household.WAGES }}</td>
-    </tr>
-    <tr>
-        <th>Per Capita Income</th>
-        <td>₱{{ household.RPCINC }}</td>
-    </tr>
-    <tr>
-        <th>Cash from Abroad</th>
-        <td>₱{{ household.CASH_ABROAD|default:"N/A" }}</td>
-    </tr>
-    <tr>
-        <th>Cash Domestic</th>
-        <td>₱{{ household.CASH_DOMESTIC|default:"N/A" }}</td>
-    </tr>
-</table>
+<table>
+    <tr><th>Total Income</th>
+        <td class="text-right"><span class="peso">₱</span>{{ household.TOINC|floatformat:2|intcomma }}</td></tr>
 
+    <tr><th>Wages</th>
+        <td class="text-right"><span class="peso">₱</span>{{ household.WAGES|floatformat:2|intcomma }}</td></tr>
+
+    <tr><th>Per Capita Income</th>
+        <td class="text-right"><span class="peso">₱</span>{{ household.PERCAPITA|floatformat:2|intcomma }}</td></tr>
+
+    <tr><th>Cash from Abroad</th>
+        <td class="text-right"><span class="peso">₱</span>{{ household.CASH_ABROAD|default:0|floatformat:2|intcomma }}</td></tr>
+
+    <tr><th>Cash Domestic</th>
+        <td class="text-right"><span class="peso">₱</span>{{ household.CASH_DOMESTIC|default:0|floatformat:2|intcomma }}</td></tr>
+
+</table>
+</div>
+
+<div class="separator"></div>
+
+<!-- EXPENDITURE -->
+<div class="section">
 <h3>Expenditure</h3>
-<table border="1">
-    <tr>
-        <th>Total Expenditure</th>
-        <td>₱{{ household.TOTEX }}</td>
-    </tr>
-    <tr>
-        <th>Per Capita Expenditure</th>
-        <td>₱{{ household.PERCAPITA|default:"N/A" }}</td>
-    </tr>
-    <tr>
-        <th>Food</th>
-        <td>₱{{ household.FOOD }}</td>
-    </tr>
-    <tr>
-        <th>Clothing</th>
-        <td>₱{{ household.CLOTH }}</td>
-    </tr>
-    <tr>
-        <th>Health</th>
-        <td>₱{{ household.HEALTH }}</td>
-    </tr>
-    <tr>
-        <th>Transport</th>
-        <td>₱{{ household.TRANSPORT }}</td>
-    </tr>
-    <tr>
-        <th>Communication</th>
-        <td>₱{{ household.COMMUNICATION }}</td>
-    </tr>
-    <tr>
-        <th>Recreation</th>
-        <td>₱{{ household.RECREATION }}</td>
-    </tr>
-    <tr>
-        <th>Education</th>
-        <td>₱{{ household.EDUCATION }}</td>
-    </tr>
-</table>
+<table>
+    <tr><th>Total Expenditure</th>
+        <td class="text-right"><span class="peso">₱</span>{{ household.TOTEX|floatformat:2|intcomma }}</td></tr>
 
-<h3> Options </h3>
+    <tr><th>Food</th>
+        <td class="text-right"><span class="peso">₱</span>{{ household.FOOD|floatformat:2|intcomma }}</td></tr>
+
+    <tr><th>Clothing</th>
+        <td class="text-right"><span class="peso">₱</span>{{ household.CLOTH|floatformat:2|intcomma }}</td></tr>
+
+    <tr><th>Health</th>
+        <td class="text-right"><span class="peso">₱</span>{{ household.HEALTH|floatformat:2|intcomma }}</td></tr>
+
+    <tr><th>Transport</th>
+        <td class="text-right"><span class="peso">₱</span>{{ household.TRANSPORT|floatformat:2|intcomma }}</td></tr>
+
+    <tr><th>Communication</th>
+        <td class="text-right"><span class="peso">₱</span>{{ household.COMMUNICATION|floatformat:2|intcomma }}</td></tr>
+        
+    <tr><th>Recreation</th>
+        <td class="text-right"><span class="peso">₱</span>{{ household.RECREATION|floatformat:2|intcomma }}</td></tr>
+
+    <tr><th>Education</th>
+        <td class="text-right"><span class="peso">₱</span>{{ household.EDUCATION|floatformat:2|intcomma }}</td></tr>
+</table>
+</div>
+
+<div class="separator"></div>
+
 <ul>
-    <li><a href="{% url 'household-delete' pk=household.pk %}">Delete Household</a></li>
-    <li><a href="{% url 'household-edit' pk=household.pk %}">Edit Household</a></li>
     <li><a href="{% url 'household-list' %}">Back to List</a></li>
 </ul>
-
 
 {% endblock %}

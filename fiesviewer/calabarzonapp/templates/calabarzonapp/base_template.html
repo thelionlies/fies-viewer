@@ -4,32 +4,105 @@
     <head>
         <meta charset="utf-8">
         <title>FIESVIEWER - Calabarzon</title>
+
+        <style>
+            ul.nav-tabs {
+                list-style: none;
+                display: flex;
+                gap: 10px;
+                border-bottom: 2px solid #ccc;
+                padding: 0;
+                margin-bottom: 20px;
+            }
+
+            ul.nav-tabs li a {
+                padding: 8px 14px;
+                text-decoration: none;
+                color: #333;
+                border: 1px solid #ccc;
+                border-bottom: none;
+                background: #f7f7f7;
+                border-radius: 6px 6px 0 0;
+                display: inline-block;
+            }
+
+            ul.nav-tabs li a:hover {
+                background: #eaeaea;
+            }
+
+            ul.nav-tabs li a.active {
+                background: white;
+                font-weight: bold;
+                border-bottom: 2px solid white;
+            }
+
+            .page-container {
+                margin-left: 40px;
+                margin-right: 40px;
+            }
+
+            header h1 {
+                text-align: center;
+            }
+        </style>
     </head>
 
     <body>
-        <header>
-            <h1>FIESVIEWER - Calabarzon</h1>
-            <p></p>
-        </header>
-             <ul>
-                    <li><a href="{% url 'index' %}">Home</a></li>
-                    <li><a href="{% url 'province-level' %}">Province Dashboard</a></li>
-                    <li><a href="{% url 'household-list' %}">Household List</a></li>
-                    <li><a href="{% url 'household-form' %}">Add New Household</a></li>
-                    <!-- Removed links for edit and delete -->
-                    <li><a href="{% url 'household-search' %}">Search Households</a></li>
-                    <li><a href="{% url 'household-filtered' %}">Filter Households</a></li>
-                </ul>
-        
+        <div class="page-container">
+            <header>
+                <h1>FIESVIEWER - Calabarzon</h1>
+            </header>
 
-        <main>
-            
-            {% block maincontent %} {% endblock %}
-            
-        </main>
+            <ul class="nav-tabs">
+                <li>
+                    <a href="{% url 'index' %}"
+                       class="{% if request.resolver_match.url_name == 'index' %}active{% endif %}">
+                        Home
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'province-level' %}"
+                       class="{% if request.resolver_match.url_name == 'province-level' %}active{% endif %}">
+                        Province Dashboard
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'household-list' %}"
+                       class="{% if request.resolver_match.url_name == 'household-list' %}active{% endif %}">
+                        Household List
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'household-form' %}"
+                       class="{% if request.resolver_match.url_name == 'household-form' %}active{% endif %}">
+                        Add New Household
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'household-search' %}"
+                       class="{% if request.resolver_match.url_name == 'household-search' %}active{% endif %}">
+                        Search Households
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'household-filtered' %}"
+                       class="{% if request.resolver_match.url_name == 'household-filtered' %}active{% endif %}">
+                        Filter Households
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="page-container">
+            <main>
+                {% block maincontent %} {% endblock %}
+            </main>
+        </div>
 
     </body>
-
-  
-
 </html>
