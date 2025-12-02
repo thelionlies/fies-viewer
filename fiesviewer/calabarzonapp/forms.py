@@ -49,26 +49,19 @@ class HouseholdAddForm(forms.ModelForm):
     class Meta:
         model = Household
         fields = [
-            'province', 'FSIZE', 'URB', 'RFACT', 'TOINC', 'WAGES',
-            'RPCINC', 'CASH_ABROAD', 'CASH_DOMESTIC', 'TOTEX', 'PERCAPITA',
+            'province', 'FSIZE', 'URB', 'WAGES',
+            'CASH_ABROAD', 'CASH_DOMESTIC',
             'FOOD', 'CLOTH', 'HEALTH', 'TRANSPORT', 'COMMUNICATION',
             'RECREATION', 'EDUCATION'
         ]
 
-        # Add attrs={'class': 'form-control'} later
-        # Are there assumptions about TOINC and TOTEX?
         widgets = {
             'province': forms.Select(),
             'FSIZE': forms.NumberInput(),
-            # 'URB': forms.NumberInput(), # changed to Select automatically because of choices
-            'RFACT': forms.NumberInput(), # is this needed
-            'TOINC': forms.NumberInput(), # this should be an autocomputed value
+            'RFACT': forms.NumberInput(),
             'WAGES': forms.NumberInput(),
-            'RPCINC': forms.NumberInput(), # is this needed
             'CASH_ABROAD': forms.NumberInput(),
             'CASH_DOMESTIC': forms.NumberInput(),
-            'TOTEX': forms.NumberInput(), # this should be an autocomputed value
-            'PERCAPITA': forms.NumberInput(), # is this needed
             'FOOD': forms.NumberInput(),
             'CLOTH': forms.NumberInput(),
             'HEALTH': forms.NumberInput(),

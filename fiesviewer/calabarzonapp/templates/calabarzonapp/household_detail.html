@@ -15,6 +15,15 @@
     .separator { border-top: 2px solid #ccc; margin: 10px 0; }
 </style>
 
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+{% endif %}
+
 <!-- Header & Buttons -->
 <div style="display:flex; flex-direction:column;">
     <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -62,21 +71,21 @@
 <!-- INCOME -->
 <div class="section">
 <h3>Income</h3>
-<table>
+<table>   
     <tr><th>Total Income</th>
-        <td class="text-right"><span class="peso">₱</span>{{ household.TOINC|floatformat:2|intcomma }}</td></tr>
+        <td class="text-right"><span class="peso">₱</span><strong>{{ household.TOINC|floatformat:2|intcomma }}</strong></td></tr>
 
     <tr><th>Wages</th>
         <td class="text-right"><span class="peso">₱</span>{{ household.WAGES|floatformat:2|intcomma }}</td></tr>
-
-    <tr><th>Per Capita Income</th>
-        <td class="text-right"><span class="peso">₱</span>{{ household.PERCAPITA|floatformat:2|intcomma }}</td></tr>
 
     <tr><th>Cash from Abroad</th>
         <td class="text-right"><span class="peso">₱</span>{{ household.CASH_ABROAD|default:0|floatformat:2|intcomma }}</td></tr>
 
     <tr><th>Cash Domestic</th>
         <td class="text-right"><span class="peso">₱</span>{{ household.CASH_DOMESTIC|default:0|floatformat:2|intcomma }}</td></tr>
+
+    <tr><th>Per Capita Income</th>
+        <td class="text-right"><span class="peso">₱</span>{{ household.PERCAPITA|floatformat:2|intcomma }}</td></tr>
 
 </table>
 </div>
@@ -88,7 +97,7 @@
 <h3>Expenditure</h3>
 <table>
     <tr><th>Total Expenditure</th>
-        <td class="text-right"><span class="peso">₱</span>{{ household.TOTEX|floatformat:2|intcomma }}</td></tr>
+        <td class="text-right"><span class="peso">₱</span><strong>{{ household.TOTEX|floatformat:2|intcomma }}</strong></td></tr>
 
     <tr><th>Food</th>
         <td class="text-right"><span class="peso">₱</span>{{ household.FOOD|floatformat:2|intcomma }}</td></tr>

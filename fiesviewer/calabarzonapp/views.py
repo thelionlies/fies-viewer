@@ -42,15 +42,15 @@ def household_form(request):
             
             household.SEQ_NO = next_seq
             household.save()
+
+            total_households = Household.objects.count()
+            per_page = 20
+            last_page = (total_households + per_page - 1) // per_page
             
-            messages.success(request, f"✓ Household #{household.SEQ_NO} has been successfully added to the database!")
-            form = HouseholdAddForm()
+            # Redirect to the last page
+            return redirect(f'/fiesviewer/households/?page={last_page}')
         
         else:
-            # Print form errors to console for debugging
-            print("Form is NOT valid!")
-            print("Form errors:", form.errors)
-            print("Form data:", request.POST)
             messages.error(request, "Please correct the errors below.")
             
     else:
@@ -68,16 +68,24 @@ def household_edit(request, pk):
         return render(request, "calabarzonapp/household_edit_form.html", context)
     
     elif request.method == "POST":
+        print(f"POST request received for household #{household.SEQ_NO}")
+        print(f"POST data: {request.POST}")
+        
         form = HouseholdAddForm(request.POST, instance=household)
         
         if form.is_valid():
-            form.save()
-            messages.success(request, f"Household #{household.SEQ_NO} updated successfully!")
-            
-            # Redirect back to household list after editing
-            return redirect('household-list')
+            print("Form is VALID - Saving...")
+            saved_household = form.save()
+            print(f"Household saved: {saved_household.SEQ_NO}")
+            messages.success(request, f"✓ Household #{household.SEQ_NO} has been successfully updated!")
+            print(f"Redirecting to household-detail with pk={household.pk}")
+            return redirect('household-detail', pk=household.pk)
 
         else:
+            print("Form is NOT valid!")
+            print("Form errors:", form.errors)
+            print("Form data:", request.POST)
+            messages.error(request, "Please correct the errors below.")
             context = {"form": form, "household": household}
             return render(request, "calabarzonapp/household_edit_form.html", context)
 
