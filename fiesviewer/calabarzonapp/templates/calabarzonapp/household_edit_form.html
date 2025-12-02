@@ -1,0 +1,116 @@
+{% extends 'calabarzonapp/base_template.html' %}
+
+{% block pagetitle %}Edit Household Entry{% endblock %}
+
+{% block maincontent %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-dark text-center py-4">
+                    <h2>Editing Household #{{ household.SEQ_NO }}</h2>
+                    <p class="mb-0">Update the information for this household.</p>
+                </div>
+
+                <div class="card-body p-4">
+
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <h4 class="mt-4 mb-3">Household Information</h4>
+                        <div class="mb-3">
+                            <label class="form-label">Sequence Number</label>
+                            <input type="text" class="form-control" value="{{ household.SEQ_NO }}" disabled>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.province.id_for_label }}" class="form-label">Province</label>
+                            {{ form.province }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.FSIZE.id_for_label }}" class="form-label">Family Size</label>
+                            {{ form.FSIZE }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.URB.id_for_label }}" class="form-label">Area Type</label>
+                            {{ form.URB }}
+                        </div>
+
+                        <h4 class="mt-4 mb-3">Income Information</h4>
+                        <div class="mb-3">
+                            <label class="form-label">Wages/Salaries</label>
+                            {{ form.WAGES }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Cash from Abroad</label>
+                            {{ form.CASH_ABROAD }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Cash from Domestic Sources</label>
+                            {{ form.CASH_DOMESTIC }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Total Income</label>
+                            {{ form.TOINC }}
+                        </div>
+
+                        <h4 class="mt-4 mb-3">Expenditure Information</h4>
+                        <div class="mb-3">
+                            <label class="form-label">Food Expenditure</label>
+                            {{ form.FOOD }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Clothing Expenditure</label>
+                            {{ form.CLOTH }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Health Expenditure</label>
+                            {{ form.HEALTH }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Transport Expenditure</label>
+                            {{ form.TRANSPORT }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Communication Expenditure</label>
+                            {{ form.COMMUNICATION }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Recreation Expenditure</label>
+                            {{ form.RECREATION }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Education Expenditure</label>
+                            {{ form.EDUCATION }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Total Expenditure</label>
+                            {{ form.TOTEX }}
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-warning btn-lg">Save Changes</button>
+                            <a href="{% url 'household-detail' household.pk %}" class="btn btn-secondary">Cancel</a>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

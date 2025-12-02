@@ -1,21 +1,131 @@
 {% extends "calabarzonapp/base_template.html" %}
+{% load humanize %}
 
 {% block maincontent %}
 
-    <h2>Household List (Filtered)</h2>
+<style>
+    table.custom-table {
+        margin-left: auto;
+        margin-right: auto;
+        border-collapse: collapse;
+        width: 90%;
+    }
+    table.custom-table th, table.custom-table td {
+        border: 1px solid #ddd;
+        padding: 5px;
+        text-align: center;
+    }
+    table.custom-table th {
+        background: #f7f7f7;
+    }
+    table.custom-table th:last-child,
+    table.custom-table td:last-child {
+        width: 250px;
+        min-width: 250px;
+    }
 
-    <ul>
+    .top-controls {
+        width: 90%;
+        margin: 20px auto 10px auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .top-controls h2 {
+        margin: 0;
+    }
+
+    .pagination-container {
+        width: 90%;
+        margin: 15px auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .pagination-container form input[type="number"] {
+        width: 60px;
+    }
+</style>
+
+<div class="top-controls">
+    <h2>Filtered Households</h2>
+    <a href="{% url 'household-search' %}" class="btn btn-secondary">Modify Filters</a>
+</div>
+
+{% if not request.GET %}
+<div class="alert alert-warning w-90 mx-auto mt-2" role="alert">
+    ⚠️ You accessed this page directly. To view filtered household results, please 
+    <a href="{% url 'household-search' %}" class="alert-link">click here to search households first</a>.
+</div>
+{% endif %}
+
+<table class="custom-table">
+    <thead>
+        <tr>
+            <th>Sequence Number</th>
+            <th>Province</th>
+            <th>Area Type</th>
+            <th>Family Size</th>
+            <th>Total Income</th>
+            <th>Total Expenditure</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
         {% for household in households %}
-            <li>
-                {{ household.province.name }} - {{ household.SEQ_NO }} | 
-                <a href="{% url 'household-detail' household.pk %}">More Info</a>
-            </li>
+        <tr>
+            <td>{{ household.SEQ_NO }}</td>
+            <td>{{ household.province }}</td>
+            <td>
+                {% if household.URB == 1 %}Urban
+                {% elif household.URB == 2 %}Rural
+                {% else %}N/A{% endif %}
+            </td>
+            <td>{{ household.FSIZE }}</td>
+            <td>₱{{ household.TOINC|floatformat:2|intcomma }}</td>
+            <td>₱{{ household.TOTEX|floatformat:2|intcomma }}</td>
+            <td>
+                <a href="{% url 'household-detail' household.pk %}" class="btn btn-info btn-sm">View</a>
+                <a href="{% url 'household-edit' household.pk %}" class="btn btn-primary btn-sm">Edit</a>
+                <a href="{% url 'household-delete' household.pk %}" class="btn btn-danger btn-sm">Delete</a>
+            </td>
+        </tr>
         {% empty %}
-            <li>No households match your filters.</li>
+        <tr>
+            <td colspan="7" style="padding: 20px; color: #666;">
+                No households match your filters.
+            </td>
+        </tr>
         {% endfor %}
-    </ul>
+    </tbody>
+</table>
+
+<!-- Pagination controls -->
+<div class="pagination-container">
+    <!-- Previous/Next buttons -->
+    <div>
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-secondary">Previous</a>
+        {% endif %}
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-secondary">Next</a>
+        {% endif %}
+        <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    </div>
+
+    <!-- Jump to page form -->
+    <div>
+        <form method="get" style="display:inline-flex; align-items:center; gap:5px;">
+            <label for="page_input">Go to page:</label>
+            <input type="number" id="page_input" name="page" min="1" max="{{ page_obj.paginator.num_pages }}" value="{{ page_obj.number }}" required>
+            <button type="submit" class="btn btn-secondary">Go</button>
+        </form>
+    </div>
+</div>
 
 {% endblock %}
-
-
-
