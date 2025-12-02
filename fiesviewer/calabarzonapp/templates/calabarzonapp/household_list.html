@@ -5,9 +5,10 @@
 
 <style>
     table.custom-table {
-        margin-left: 40px;
+        margin-left: auto;
+        margin-right: auto;
         border-collapse: collapse;
-        width: 70%;
+        width: 90%;
     }
     table.custom-table th, table.custom-table td {
         border: 1px solid #ddd;
@@ -16,6 +17,11 @@
     }
     table.custom-table th {
         background: #f7f7f7;
+    }
+    table.custom-table th:last-child,
+    table.custom-table td:last-child {
+        width: 250px;
+        min-width: 250px;
     }
 </style>
 
@@ -55,7 +61,7 @@
 </table>
 
 <!-- Page number and navigation -->
-<div style="width:70%; margin-left:40px; margin-top:10px; display:flex; justify-content:space-between; align-items:center; gap:10px;">
+<div style="width:90%; margin-left:auto; margin-right:auto; margin-top:10px; display:flex; justify-content:space-between; align-items:center; gap:10px;">
 
     <!-- Page info and navigation buttons on the left -->
     <div style="display:flex; align-items:center; gap:5px;">

@@ -4,17 +4,51 @@
 {% block pagetitle %}Province Dashboard - {{ current_province.name }}{% endblock %}
 
 {% block maincontent %}
+<style>
+    .card-title {
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+    }
+    .card-body {
+        padding: 0.75rem;
+    }
+    .province-navigation {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background: #f8fafc;
+        border-radius: 8px;
+    }
+    .province-selector {
+        margin-bottom: 2.5rem;
+        padding: 1rem;
+        background: #f8fafc;
+        border-radius: 8px;
+    }
+    .province-selector label {
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+    h2 {
+        margin-bottom: 2rem;
+    }
+</style>
+
 <h2>Province Information: {{ current_province.name }}</h2>
 
 <!-- Navigation Controls -->
-<div class="province-navigation mb-3">
+<div class="province-navigation">
     {% if previous_province %}
         <a href="{% url 'province-level' previous_province.id %}" class="btn btn-primary">← {{ previous_province.name }}</a>
     {% else %}
         <button class="btn btn-secondary" disabled>← Previous</button>
     {% endif %}
     
-    <span class="mx-3">{{ current_province.name }}</span>
+    <span class="mx-3" style="font-weight: 600; font-size: 1.1rem;">{{ current_province.name }}</span>
     
     {% if next_province %}
         <a href="{% url 'province-level' next_province.id %}" class="btn btn-primary">{{ next_province.name }} →</a>
@@ -24,7 +58,7 @@
 </div>
 
 <!-- Province dropdown for quick navigation -->
-<div class="province-selector mb-4">
+<div class="province-selector">
     <label for="province-select">Jump to Province:</label>
     <select id="province-select" class="form-control" onchange="location = this.value;">
         {% for province in all_provinces %}
