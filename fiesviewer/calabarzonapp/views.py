@@ -36,14 +36,23 @@ def household_form(request):
             # Auto-increment SEQ_NO
             max_seq = Household.objects.aggregate(Max('SEQ_NO'))['SEQ_NO__max'] or 0
             next_seq = max_seq + 1
+
             while Household.objects.filter(SEQ_NO=next_seq).exists():
                 next_seq += 1
-            household.SEQ_NO = next_seq
             
+            household.SEQ_NO = next_seq
             household.save()
             
-            # Redirect back to household list after adding
-            return redirect('household-list')
+            messages.success(request, f"✓ Household #{household.SEQ_NO} has been successfully added to the database!")
+            form = HouseholdAddForm()
+        
+        else:
+            # Print form errors to console for debugging
+            print("Form is NOT valid!")
+            print("Form errors:", form.errors)
+            print("Form data:", request.POST)
+            messages.error(request, "Please correct the errors below.")
+            
     else:
         form = HouseholdAddForm()
 

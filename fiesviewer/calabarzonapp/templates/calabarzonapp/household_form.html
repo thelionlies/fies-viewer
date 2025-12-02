@@ -8,6 +8,16 @@
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
             <div class="card shadow">
                 <div class="card-header bg-primary text-white text-center py-4">
                     <h2>Your Insights Matter!</h2>
@@ -53,6 +63,15 @@
                             <label for="{{ form.TOINC.id_for_label }}" class="form-label">Total Income:</label>
                             {{ form.TOINC }}
                         </div>
+                        <div class="mb-3">
+                            <label for="{{ form.PERCAPITA.id_for_label }}" class="form-label">Per Capita:</label>
+                            {{ form.PERCAPITA }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.RPCINC.id_for_label }}" class="form-label">Per Capita Decile:</label>
+                            {{ form.RPCINC }}
+                        </div>
+
 
                         <h4 class="mt-4 mb-3">Expenditure Information</h4>
                         <div class="mb-3">
