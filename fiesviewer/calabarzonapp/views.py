@@ -1,5 +1,6 @@
+from pydoc import Helper
 from django.shortcuts import render, redirect, get_object_or_404
-from django.db.models import Max, Count, Avg, Sum, Min
+from django.db.models import Max, Count, Avg, Sum, Min, F, FloatField
 from django.contrib import messages
 from .models import Household, Province
 from .forms import HouseholdFilterForm, HouseholdAddForm
@@ -10,7 +11,7 @@ def index(request):
 
 def listhouseholds(request):
     all_households = Household.objects.all().order_by('SEQ_NO')
-    paginator = Paginator(all_households, 20)  # 20 households per page
+    paginator = Paginator(all_households, 20) 
 
     page_number = request.GET.get('page')  # Get ?page=1, ?page=2, etc.
     page_obj = paginator.get_page(page_number)
@@ -182,17 +183,26 @@ def province_level(request, province_id=None):
     urban_households = province_households.filter(URB=1).count()
     rural_households = province_households.filter(URB=2).count()
     total_households = province_households.count()
-    avg_income = province_households.aggregate(Avg('TOINC'))['TOINC__avg'] or 0
-    avg_expenditure = province_households.aggregate(Avg('TOTEX'))['TOTEX__avg'] or 0
-    avg_food = province_households.aggregate(Avg('FOOD'))['FOOD__avg'] or 0
-    avg_cloth = province_households.aggregate(Avg('CLOTH'))['CLOTH__avg'] or 0
-    avg_health = province_households.aggregate(Avg('HEALTH'))['HEALTH__avg'] or 0
-    avg_transport = province_households.aggregate(Avg('TRANSPORT'))['TRANSPORT__avg'] or 0
-    avg_communication = province_households.aggregate(Avg('COMMUNICATION'))['COMMUNICATION__avg'] or 0
-    avg_recreation = province_households.aggregate(Avg('RECREATION'))['RECREATION__avg'] or 0
-    avg_education = province_households.aggregate(Avg('EDUCATION'))['EDUCATION__avg'] or 0
-    avg_fsize = province_households.aggregate(Avg('FSIZE'))['FSIZE__avg'] or 1  # to avoid division by zero
-    avg_pcp = province_households.aggregate(Avg('PERCAPITA'))['PERCAPITA__avg'] or 0
+    total_rfact = province_households.aggregate(total=Sum('RFACT'))['total'] or 1
+
+     #Helper function for weighted averages
+    def weighted_avg(field_name):
+        result = province_households.aggregate(
+            weighted=Sum(F(field_name) * F('RFACT'), output_field=FloatField())
+        )['weighted']
+        return result / total_rfact if result else 0
+
+    avg_income = weighted_avg('TOINC')
+    avg_expenditure = weighted_avg('TOTEX')
+    avg_food = weighted_avg('FOOD')
+    avg_cloth = weighted_avg('CLOTH')
+    avg_health = weighted_avg('HEALTH')
+    avg_transport = weighted_avg('TRANSPORT')
+    avg_communication = weighted_avg('COMMUNICATION')
+    avg_recreation = weighted_avg('RECREATION')
+    avg_education = weighted_avg('EDUCATION')
+    avg_fsize = weighted_avg('FSIZE') or 1
+    avg_pcp = weighted_avg('PERCAPITA')
 
     # For viz
     categories = ['Food', 'Clothing', 'Health', 'Transport', 'Communication', 'Recreation', 'Education']
