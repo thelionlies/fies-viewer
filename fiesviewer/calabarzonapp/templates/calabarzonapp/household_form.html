@@ -1,11 +1,103 @@
-{% extends "calabarzonapp/base_template.html" %}
+{% extends 'calabarzonapp/base_template.html' %}
+
+{% block pagetitle %}Add Household Entry{% endblock %}
+
 {% block maincontent %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<h2>Household Form</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_ul }}
-        <button type="submit">Submit</button>
-    </form>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <h2>Your Insights Matter!</h2>
+                    <p class="mb-0">Help us understand the Filipino family spending patterns in CALABARZON.</p>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-info">
+                        <p class="mb-2">We're analyzing how families in CALABARZON earn and spend to better plan community programs. Please provide your anonymous data based on the key categories of the Family Income and Expenditure: Survey (FIES).</p>
+                        <p class="mb-0"><strong>Your participation helps build a clearer picture of financial well-being in your area.</strong></p>
+                    </div>
 
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <h4 class="mt-4 mb-3">Household Information</h4>
+                        <div class="mb-3">
+                            <label for="{{ form.province.id_for_label }}" class="form-label">Province</label>
+                            {{ form.province }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.FSIZE.id_for_label }}" class="form-label">Family Size</label>
+                            {{ form.FSIZE }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.URB.id_for_label }}" class="form-label">Area Type</label>
+                            {{ form.URB }}
+                        </div>
+
+                        <h4 class="mt-4 mb-3">Income Information</h4>
+                        <div class="mb-3">
+                            <label for="{{ form.WAGES.id_for_label }}" class="form-label">Wages/Salaries:</label>
+                            {{ form.WAGES }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.CASH_ABROAD.id_for_label }}" class="form-label">Cash from Abroad:</label>
+                            {{ form.CASH_ABROAD }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.CASH_DOMESTIC.id_for_label }}" class="form-label">Cash from Domestic Sources:</label>
+                            {{ form.CASH_DOMESTIC }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.TOINC.id_for_label }}" class="form-label">Total Income:</label>
+                            {{ form.TOINC }}
+                        </div>
+
+                        <h4 class="mt-4 mb-3">Expenditure Information</h4>
+                        <div class="mb-3">
+                            <label for="{{ form.FOOD.id_for_label }}" class="form-label">Food Expenditure:</label>
+                            {{ form.FOOD }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.CLOTH.id_for_label }}" class="form-label">Clothing Expenditure:</label>
+                            {{ form.CLOTH }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.HEALTH.id_for_label }}" class="form-label">Health Expenditure:</label>
+                            {{ form.HEALTH }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.TRANSPORT.id_for_label }}" class="form-label">Transport Expenditure:</label>
+                            {{ form.TRANSPORT }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.COMMUNICATION.id_for_label }}" class="form-label">Communication Expenditure:</label>
+                            {{ form.COMMUNICATION }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.RECREATION.id_for_label }}" class="form-label">Recreation Expenditure:</label>
+                            {{ form.RECREATION }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.EDUCATION.id_for_label }}" class="form-label">Education Expenditure:</label>
+                            {{ form.EDUCATION }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.TOTEX.id_for_label }}" class="form-label">Total Expenditure:</label>
+                            {{ form.TOTEX }}
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">Submit Household Data</button>
+                            <a href="{% url 'household-list' %}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}

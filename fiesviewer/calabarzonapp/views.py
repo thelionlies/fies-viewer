@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.db.models import Max
+from django.db.models import Max, Count, Avg, Sum, Min
 from django.contrib import messages
 from .models import Household, Province
 from .forms import HouseholdFilterForm, HouseholdAddForm
@@ -133,5 +133,65 @@ def household_filtered(request):
     }
     return render(request, 'calabarzonapp/household_filtered.html', context)
 
-def province_level(request):
-    return render(request, 'calabarzonapp/province_level.html')
+def province_level(request, province_id=None):
+    all_provinces = Province.objects.all().order_by('name')
+
+    if province_id is None:
+        current_province = all_provinces.first()
+    else:
+        current_province = get_object_or_404(Province, id=province_id)
+
+    # Get the index of current province
+    province_list = list(all_provinces)
+    current_index = province_list.index(current_province)
+    
+    # Determine previous and next provinces
+    previous_province = province_list[current_index - 1] if current_index > 0 else None
+    next_province = province_list[current_index + 1] if current_index < len(province_list) - 1 else None
+    
+    # Some aggregates
+    province_households = Household.objects.filter(province=current_province)
+    urban_households = province_households.filter(URB=1).count()
+    rural_households = province_households.filter(URB=2).count()
+    total_households = province_households.count()
+    avg_income = province_households.aggregate(Avg('TOINC'))['TOINC__avg'] or 0
+    avg_expenditure = province_households.aggregate(Avg('TOTEX'))['TOTEX__avg'] or 0
+    avg_food = province_households.aggregate(Avg('FOOD'))['FOOD__avg'] or 0
+    avg_cloth = province_households.aggregate(Avg('CLOTH'))['CLOTH__avg'] or 0
+    avg_health = province_households.aggregate(Avg('HEALTH'))['HEALTH__avg'] or 0
+    avg_transport = province_households.aggregate(Avg('TRANSPORT'))['TRANSPORT__avg'] or 0
+    avg_communication = province_households.aggregate(Avg('COMMUNICATION'))['COMMUNICATION__avg'] or 0
+    avg_recreation = province_households.aggregate(Avg('RECREATION'))['RECREATION__avg'] or 0
+    avg_education = province_households.aggregate(Avg('EDUCATION'))['EDUCATION__avg'] or 0
+    avg_fsize = province_households.aggregate(Avg('FSIZE'))['FSIZE__avg'] or 1  # to avoid division by zero
+    avg_pcp = province_households.aggregate(Avg('PERCAPITA'))['PERCAPITA__avg'] or 0
+
+    # For viz
+    categories = ['Food', 'Clothing', 'Health', 'Transport', 'Communication', 'Recreation', 'Education']
+    expenditure_values = [
+        round(avg_food, 2),
+        round(avg_cloth, 2),
+        round(avg_health, 2),
+        round(avg_transport, 2),
+        round(avg_communication, 2),
+        round(avg_recreation, 2),
+        round(avg_education, 2)
+    ]
+
+    context = {
+        'current_province': current_province,
+        'all_provinces': all_provinces,
+        'previous_province': previous_province,
+        'next_province': next_province,
+        'urban_households': urban_households,
+        'rural_households': rural_households,
+        'total_households': total_households,
+        'avg_fsize': round(avg_fsize, 2),
+        'avg_income': round(avg_income, 2),
+        'avg_expenditure': round(avg_expenditure, 2),
+        'avg_pcp': round(avg_pcp, 2),
+        'categories': categories,
+        'expenditure_values': expenditure_values,
+    }
+    
+    return render(request, 'calabarzonapp/province_level.html', context)

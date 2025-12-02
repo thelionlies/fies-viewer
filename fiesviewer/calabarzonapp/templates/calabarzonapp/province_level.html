@@ -1,7 +1,198 @@
-{% extends "calabarzonapp/base_template.html" %}
+{% extends 'calabarzonapp/base_template.html' %}
+{% load humanize %}
+
+{% block pagetitle %}Province Dashboard - {{ current_province.name }}{% endblock %}
+
 {% block maincontent %}
+<h2>Province Information: {{ current_province.name }}</h2>
 
-    <h2>Province Dashboard</h2>
+<!-- Navigation Controls -->
+<div class="province-navigation mb-3">
+    {% if previous_province %}
+        <a href="{% url 'province-level' previous_province.id %}" class="btn btn-primary">← {{ previous_province.name }}</a>
+    {% else %}
+        <button class="btn btn-secondary" disabled>← Previous</button>
+    {% endif %}
+    
+    <span class="mx-3">{{ current_province.name }}</span>
+    
+    {% if next_province %}
+        <a href="{% url 'province-level' next_province.id %}" class="btn btn-primary">{{ next_province.name }} →</a>
+    {% else %}
+        <button class="btn btn-secondary" disabled>Next →</button>
+    {% endif %}
+</div>
 
+<!-- Province dropdown for quick navigation -->
+<div class="province-selector mb-4">
+    <label for="province-select">Jump to Province:</label>
+    <select id="province-select" class="form-control" onchange="location = this.value;">
+        {% for province in all_provinces %}
+            <option value="{% url 'province-level' province.id %}" {% if province == current_province %}selected{% endif %}>
+                {{ province.name }}
+            </option>
+        {% endfor %}
+    </select>
+</div>
+
+<!-- Two Column Layout -->
+<div class="row">
+    <!-- Left Column: Image and Description -->
+    <div class="col-md-4">
+        {% if current_province.image %}
+        <div class="province-image text-center mb-4">
+            <img src="{{ current_province.image.url }}" alt="{{ current_province.name }}" class="img-fluid" style="max-width: 100%; height: auto;">
+            {% if current_province.image_description %}
+                <p class="mt-2"><em>{{ current_province.image_description }}</em></p>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if current_province.description %}
+        <div class="province-description">
+            <h3>About {{ current_province.name }}</h3>
+            <p>{{ current_province.description|linebreaks }}</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Right: Statistics and Charts -->
+    <div class="col-md-8">
+        <!-- Household Statistics 1x4 GridLayout -->
+        <h3>Respondent Household Statistics</h3>
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Households</h5>
+                        <p class="card-text"><strong>{{ total_households|intcomma }}</strong></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Urban Households</h5>
+                        <p class="card-text"><strong>{{ urban_households|intcomma }}</strong></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Rural Households</h5>
+                        <p class="card-text"><strong>{{ rural_households|intcomma }}</strong></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Avg Family Size</h5>
+                        <p class="card-text"><strong>{{ avg_fsize|floatformat:2 }}</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Financial Overview 1x3 GridLayout -->
+        <h3>Financial Overview</h3>
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Average Income</h5>
+                        <p class="card-text"><strong>₱ {{ avg_income|floatformat:2|intcomma }}</strong></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Average Expenditure</h5>
+                        <p class="card-text"><strong>₱ {{ avg_expenditure|floatformat:2|intcomma }}</strong></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Average Per Capita Income</h5>
+                        <p class="card-text"><strong>₱ {{ avg_pcp|floatformat:2|intcomma }}</strong></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Visualization Below -->
+        <h3>Average Expenditure by Category</h3>
+        <canvas id="expenditureChart" width="400" height="200"></canvas>
+    </div>
+</div>
+
+{{ categories|json_script:"categories-data" }}
+{{ expenditure_values|json_script:"expenditure-data" }}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const categories = JSON.parse(document.getElementById('categories-data').textContent);
+    const expenditureValues = JSON.parse(document.getElementById('expenditure-data').textContent);
+    
+    const ctx = document.getElementById('expenditureChart').getContext('2d');
+    const expenditureChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: categories,
+            datasets: [{
+                label: 'Average Expenditure (₱)',
+                data: expenditureValues,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(153, 102, 255, 0.6)',
+                    'rgba(255, 159, 64, 0.6)',
+                    'rgba(201, 203, 207, 0.6)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(201, 203, 207, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '₱' + value.toLocaleString();
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return '₱' + context.parsed.y.toLocaleString();
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
 
 {% endblock %}

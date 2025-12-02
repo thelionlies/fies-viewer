@@ -28,6 +28,7 @@ urlpatterns = [
 
     # localhost:8000/fiesviewer/province-level
     path('province-level/', views.province_level, name='province-level'),
+    path('province-level/<int:province_id>/', views.province_level, name='province-level'),
 
 
 
