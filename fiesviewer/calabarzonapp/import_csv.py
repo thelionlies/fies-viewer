@@ -15,7 +15,6 @@ PROVINCE_MAP = {
 for code, name in PROVINCE_MAP.items():
     Province.objects.update_or_create(code=code, defaults={'name': name})
 
-# Load CSV
 df = pd.read_csv('calabarzonapp/data.csv')
 
 # Insert households

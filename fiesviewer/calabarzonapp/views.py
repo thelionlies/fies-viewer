@@ -6,14 +6,16 @@ from .models import Household, Province
 from .forms import HouseholdFilterForm, HouseholdAddForm
 from django.core.paginator import Paginator
 
+
 def index(request):
     return render(request, 'calabarzonapp/base_template.html')
+
 
 def listhouseholds(request):
     all_households = Household.objects.all().order_by('SEQ_NO')
     paginator = Paginator(all_households, 20) 
 
-    page_number = request.GET.get('page')  # Get ?page=1, ?page=2, etc.
+    page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
     return render(request, 'calabarzonapp/household_list.html', {'page_obj': page_obj})
@@ -26,7 +28,7 @@ def household_detail(request, pk):
     }
     return render(request, 'calabarzonapp/household_detail.html', context)
 
-# This is for adding entries
+
 def household_form(request):
     if request.method == 'POST':
         form = HouseholdAddForm(request.POST)
@@ -34,7 +36,7 @@ def household_form(request):
         if form.is_valid():
             household = form.save(commit=False)
             
-            # Auto-increment SEQ_NO
+            # Auto-increment
             max_seq = Household.objects.aggregate(Max('SEQ_NO'))['SEQ_NO__max'] or 0
             next_seq = max_seq + 1
 
@@ -47,8 +49,7 @@ def household_form(request):
             total_households = Household.objects.count()
             per_page = 20
             last_page = (total_households + per_page - 1) // per_page
-            
-            # Redirect to the last page
+
             return redirect(f'/fiesviewer/households/?page={last_page}')
         
         else:
@@ -59,7 +60,7 @@ def household_form(request):
 
     return render(request, 'calabarzonapp/household_form.html', {'form': form})
 
-# For editing existing entries
+
 def household_edit(request, pk):
     household = get_object_or_404(Household, pk=pk)
     
@@ -90,7 +91,7 @@ def household_edit(request, pk):
             context = {"form": form, "household": household}
             return render(request, "calabarzonapp/household_edit_form.html", context)
 
-# This is for deleting
+
 def household_delete(request, pk):
     household = get_object_or_404(Household, pk=pk)
 
@@ -119,7 +120,7 @@ def household_filtered(request):
     households = Household.objects.all().order_by('SEQ_NO')
 
     if form.is_valid():
-        # Filter by provinces
+        # Filter by province
         provinces = form.cleaned_data.get('provinces')
         if provinces:
             households = households.filter(province__in=provinces)
@@ -146,15 +147,15 @@ def household_filtered(request):
             households = households.filter(TOTEX__lte=exp_max)
 
     # Pagination
-    paginator = Paginator(households, 20)  # 20 per page
+    paginator = Paginator(households, 20)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    show_disclaimer = not request.GET  # True if accessed directly
+    show_disclaimer = not request.GET
 
     context = {
         'form': form,
-        'households': page_obj,  # send paginated queryset
+        'households': page_obj,
         'show_disclaimer': show_disclaimer,
         'paginator': paginator,
         'page_obj': page_obj,
@@ -170,11 +171,8 @@ def province_level(request, province_id=None):
     else:
         current_province = get_object_or_404(Province, id=province_id)
 
-    # Get the index of current province
     province_list = list(all_provinces)
     current_index = province_list.index(current_province)
-    
-    # Determine previous and next provinces
     previous_province = province_list[current_index - 1] if current_index > 0 else None
     next_province = province_list[current_index + 1] if current_index < len(province_list) - 1 else None
     

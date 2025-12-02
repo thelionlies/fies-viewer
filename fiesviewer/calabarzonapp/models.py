@@ -41,7 +41,7 @@ class Household(models.Model):
         return f"Household {self.SEQ_NO} in {self.province}"
     
     def save(self, *args, **kwargs):
-        # Automatically compute TOINC and TOTEX before saving
+        # Compute TOINC and TOTEX
         self.TOINC = (self.WAGES or 0) + (self.CASH_ABROAD or 0) + (self.CASH_DOMESTIC or 0)
         self.TOTEX = (self.FOOD or 0) + (self.CLOTH or 0) + (self.HEALTH or 0) + (self.TRANSPORT or 0) + (self.COMMUNICATION or 0) + (self.RECREATION or 0) + (self.EDUCATION or 0)
         self.PERCAPITA = self.TOINC / self.FSIZE if self.FSIZE > 0 else 0
